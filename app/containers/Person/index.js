@@ -23,8 +23,6 @@ export function Person(props) {
   const { person, actions } = props;
   const { personDetails, error, loading } = person;
   const { id } = props.match.params;
-  // eslint-disable-next-line no-console
-  console.log('person...');
 
   React.useEffect(() => {
     actions.loadPerson(id);
@@ -52,7 +50,7 @@ function mapDispatchToProps(dispatch) {
 Person.propTypes = {
   match: PropTypes.shape({
     params: PropTypes.shape({
-      id: PropTypes.number.isRequired,
+      id: PropTypes.string.isRequired,
     }),
   }),
   person: PropTypes.object,

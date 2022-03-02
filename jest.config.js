@@ -17,6 +17,7 @@ module.exports = {
     NODE_ENV: 'test',
   },
   setupFiles: ['./internals/mocks/registerContext.js'],
+  setupFilesAfterEnv: ['./internals/mocks/setupTests.js'],
   testRegex: 'tests/.*\\.test\\.js$',
   snapshotSerializers: [],
 };

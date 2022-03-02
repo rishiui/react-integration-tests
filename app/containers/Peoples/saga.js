@@ -9,7 +9,6 @@ export function* getPeople() {
     yield put(peopleLoaded(peopleData));
   } catch (err) {
     yield put(peopleError(err));
-    throw new Error('Some error occurred while fetching people');
   }
 }
 
