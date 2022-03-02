@@ -5,7 +5,6 @@ import { createMemoryHistory } from 'history';
 import '@testing-library/jest-dom';
 import 'whatwg-fetch';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 import App from '../containers/App';
 import configureStore from '../configureStore';
@@ -15,7 +14,7 @@ import { API_ENDPOINT } from '../../server/api';
 let history;
 const renderApp = () => {
   history = createMemoryHistory();
-  history.push('/');
+  history.push('/person/1');
   const store = configureStore({}, history);
 
   return render(
@@ -39,38 +38,25 @@ describe('Test Peoples Page', () => {
     server.close();
   });
 
-  it('It should render a list of peoples and redirect to person details page when a person is clicked on the listing page', async () => {
+  it('It should display person details', async () => {
     renderApp();
 
-    /**
-     * Test the following flows:
-     * 1. It should render list of people in People List page.
-     * 2. It should redirect and open Person Details page when any person is clicked.
-     */
-
     // It should initially display loading people text
-    expect(screen.getByText(/Loading People.../)).toBeInTheDocument();
+    expect(await screen.findByText(/Loading Person.../)).toBeInTheDocument();
 
-    // Once the Page has loaded it should display the text 'Peoples in Starwar'
+    // Once the Page has loaded it should display the text 'Person Details are:'
     expect(
-      await screen.findByText(/peoples in starwar/i, {}, { timeout: 3000 }),
+      await screen.findByText(/Person Details are:/i, {}, { timeout: 3000 }),
     ).toBeInTheDocument();
 
-    const numOfPeople = await screen.findAllByRole('link');
-    expect(numOfPeople.length).toBe(10);
-
-    const person1 = await screen.findByRole('link', {
-      name: /Luke Skywalker/i,
-    });
-    userEvent.click(person1);
-    expect(history.location.pathname).toBe(`/person/1`);
-
-    expect(screen.getByText(/Loading Person.../)).toBeInTheDocument();
+    expect(screen.getByText(/Name: Luke Skywalker/i));
+    expect(screen.getByText(/No of starships: 2/i));
+    expect(screen.getByText(/No of vehicles: 2/i));
   });
 
-  it('It should display error message when person listing call results in error', async () => {
+  it('It should display error message when get person call results in error', async () => {
     server.use(
-      rest.get(`${API_ENDPOINT}/people`, (req, res, ctx) =>
+      rest.get(`${API_ENDPOINT}/people/:id`, (req, res, ctx) =>
         res(ctx.status(400)),
       ),
     );
@@ -83,7 +69,7 @@ describe('Test Peoples Page', () => {
      */
 
     // It should initially display loading people text
-    expect(screen.getByText(/Loading People.../)).toBeInTheDocument();
+    expect(screen.getByText(/Loading Person.../)).toBeInTheDocument();
 
     // Once the Page has loaded it should display the text 'Peoples in Starwar'
     expect(
@@ -95,15 +81,10 @@ describe('Test Peoples Page', () => {
     ).toBeInTheDocument();
   });
 
-  it('It should display message when listing call has no results.', async () => {
+  it('It should display message when get person call returns no data', async () => {
     server.use(
-      rest.get(`${API_ENDPOINT}/people`, (req, res, ctx) =>
-        res(
-          ctx.status(200),
-          ctx.json({
-            results: [],
-          }),
-        ),
+      rest.get(`${API_ENDPOINT}/people/:id`, (req, res, ctx) =>
+        res(ctx.status(200), ctx.json({})),
       ),
     );
 
@@ -115,11 +96,15 @@ describe('Test Peoples Page', () => {
      */
 
     // It should initially display loading people text
-    expect(screen.getByText(/Loading People.../)).toBeInTheDocument();
+    expect(screen.getByText(/Loading Person.../)).toBeInTheDocument();
 
     // Once the Page has loaded it should display the text 'Peoples in Starwar'
     expect(
-      await screen.findByText(/No people found./i, {}, { timeout: 3000 }),
+      await screen.findByText(
+        /Person Details Not found/i,
+        {},
+        { timeout: 3000 },
+      ),
     ).toBeInTheDocument();
   });
 });

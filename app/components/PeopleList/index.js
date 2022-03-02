@@ -11,7 +11,7 @@ const PeopleList = ({ peopleList }) => (
       const peopleId = peopleUrl[peopleUrl.length - 2];
       return (
         <StyledUserName key={people.name}>
-          <Link className="username" to={`/people/${peopleId}`}>
+          <Link className="username" to={`/person/${peopleId}`}>
             {`${index + 1}${'. '}${people.name}`}
           </Link>
         </StyledUserName>

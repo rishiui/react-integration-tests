@@ -17,7 +17,7 @@ export default function App() {
   return (
     <Switch>
       <Route exact path="/" component={People} />
-      <Route path="/people/:id" component={Person} />
+      <Route path="/person/:id" component={Person} />
       <Route path="" component={NotFoundPage} />
     </Switch>
   );
