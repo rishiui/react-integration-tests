@@ -27,6 +27,7 @@ module.exports = {
       plugins: [
         '@babel/plugin-transform-modules-commonjs',
         'dynamic-import-node',
+        'babel-plugin-require-context-hook',
       ],
     },
   },
